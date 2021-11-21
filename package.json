@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/paulv160/filemanager/issues"
   },
-  "homepage": "https://github.com/paulv160/filemanager#readme"
+  "homepage": "https://github.com/paulv160/filemanager#readme",
+  "dependencies": {
+    "electron": "^16.0.1"
+  }
 }
