@@ -1,23 +1,49 @@
-const $ = require( "jquery" );
+const $ = require( 'jquery' );
+const path = require('path')
+const fs = require('fs')
+const os = require('os')
 
+let DEFAULT_PATH = '/Users/paul/Programming'
+let CURR_PATH
+
+const get_file_elem = (filename) => {
+  return `<li>${filename}</li>`
+}
+
+const change_path = (newpath) => {
+  CURR_PATH = newpath
+  $('#filename-header').html(`Current Directory: ${newpath}`)
+  $('#filename-list').empty()
+  fs.readdir(
+    newpath, (err, files) => {
+      if (err)
+        console.log(err)
+      else {
+        files.forEach(file => {
+          let elem = get_file_elem(file)
+          $('#filename-list').append(elem)
+        })
+      }
+    }
+  )
+}
+
+
+/* on ready */
 $(() => {
-    const crypto = require('crypto')
-  
-    $('#text-input').bind('input propertychange', function() {
-      const text = this.value
-  
-      const md5 = crypto.createHash('md5').update(text, 'utf8').digest('hex')
-      $('#md5-output').text(md5)
-  
-      const sha1 = crypto.createHash('sha1').update(text, 'utf8').digest('hex')
-      $('#sha1-output').text(sha1)
-  
-      const sha256 = crypto.createHash('sha256').update(text, 'utf8').digest('hex')
-      $('#sha256-output').text(sha256)
-  
-      const sha512 = crypto.createHash('sha512').update(text, 'utf8').digest('hex')
-      $('#sha512-output').text(sha512)
-    })
-  
-    $('#text-input').focus() // focus input box
-  })
+
+  $('#changedir-submit').click(
+    () => {
+    change_path(
+      $('#changedir-input').val()
+    )
+    console.log('a')
+
+  }
+)
+
+
+  change_path(DEFAULT_PATH)
+  console.log('Ready')
+  console.log($('#changedir-submit'))
+})
