@@ -7,6 +7,16 @@ const os = require('os')
 const DEFAULT_PATH = '/'
 let CURR_PATH = null
 
+const isDir = (path) => {
+  try {
+      var stat = fs.lstatSync(path);
+      return stat.isDirectory();
+  } catch (e) {
+      // lstatSync throws an error if path doesn't exist
+      return false;
+  }
+}
+
 const get_file_table = (files) => {
   return `
   <table id='filename-list'>
@@ -28,7 +38,7 @@ const get_file_table = (files) => {
 }
 
 const get_file_type = (filename) => {
-  return 'File'
+  return (isDir(filename)) ? 'Folder' : 'File'
 }
 
 const get_file_elem = (filename) => {
