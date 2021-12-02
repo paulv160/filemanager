@@ -3,8 +3,9 @@ const path = require('path')
 const fs = require('fs')
 const os = require('os')
 
-const DEFAULT_PATH = '/Users/paul/Programming'
-let CURR_PATH
+// default = root for now
+const DEFAULT_PATH = '/'
+let CURR_PATH = null
 
 const get_file_table = (files) => {
   return `
@@ -27,12 +28,7 @@ const get_file_table = (files) => {
 }
 
 const get_file_type = (filename) => {
-  if (fs.lstatSync(filename).isDirectory()) 
-    return 'Folder'
-  return {
-    txt: 'Text File',
-    js: 'JavaScript Source'
-  }
+  return 'File'
 }
 
 const get_file_elem = (filename) => {
@@ -42,40 +38,50 @@ const get_file_elem = (filename) => {
       ${filename}
     </td>
     <td>
-      ${path.extname(filename)}
+      ${get_file_type(filename)}
     </td>
   </tr>`
 }
 
 const change_path = (newpath) => {
-  CURR_PATH = newpath
   $('#filename-container').empty()
-  fs.readdir(
-    newpath, (err, files) => {
-      if (err)
-        console.log(err)
-      else {
-        $('#filename-container').html(
-          get_file_table(files)
-        )
+    fs.readdir(
+      newpath, (err, files) => {
+        if (err) {
+          console.log(err)
+          $('#filename-container').html(
+            `
+            <h3>
+              Path "${newpath}" does not exist.
+            </h3>
+            `
+          )
+          return
+        } else {
+          $('#filename-container').html(
+            get_file_table(files)
+          )
+        }
       }
-    }
-  )
+    )
+  CURR_PATH = newpath
 }
-
 
 $(document).ready(
   () => {
-
-    $('#changedir-submit').on('click',
-      () => {
-        change_path(
-          $('#changedir-input').val()
-        )
+  
+    $('#changedir-submit').on('click', (evt) => {
+      evt.preventDefault(); // prevent reload
+      
+      change_path($('#changedir-input').val());
     })
-
-    change_path(DEFAULT_PATH)
+  
+    if (CURR_PATH === null) {
+      change_path(DEFAULT_PATH)
+    }
 
     console.log('Ready')
-  }
-)
+   
+    console.log(`Current time is ${new Date().toLocaleTimeString()}.`)
+
+})
